@@ -1,10 +1,11 @@
 # Multiphase simulations of liquid jet in crossflow in OpenFOAM
 
 This repository contains files for incompressible, multiphase simulations of 
-a liquid jet in crossflows
+a liquid jet in crossflows in OpenFOAM using the interFOAM multiphase flow solver.
 
 # Simulations
-Direct numerical simulations and Reynolds Averaged Navier-Stokes (RANS) simulations 
+Direct numerical simulations and Reynolds Averaged Navier-Stokes (RANS) ($k-\epsilon$) simulations of a water jet in air crossflow 
+are perfomed using interFOAM. The domain, boundary conditions and the simulation parameters are shown in the section below.
 
 ## Setup 
 

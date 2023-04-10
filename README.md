@@ -11,6 +11,10 @@ are perfomed using interFOAM. The domain, boundary conditions and the simulation
 
 <img src="Images/JICF_Setup.png?raw=true&v=50" alt="your_alternative_text" width="50%" height="50%" loop="true" autoplay="true"><img src="Images/JICF_Table.png?raw=true&v=50" alt="your_alternative_text" width="50%" height="50%">   
 
+## Running
+The ```DNS``` and ```RANS_k-epsilon``` directories contain the ```0```, ```constant``` and ```system``` directories required to run the simulations 
+for the direct numerical simulations and the RANS cases respectively.
+
 ## Visualization 
 Contours of volume fraction rendered using ray casting in VisIt and contours of streamwise velocity 
 

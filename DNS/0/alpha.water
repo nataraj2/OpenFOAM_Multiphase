@@ -1,0 +1,101 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      binary;
+    class       volScalarField;
+    location    "0";
+    object      alpha.water;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    inlet_gas
+    {
+        type            zeroGradient;
+    }
+    inlet_liquid
+    {
+        type            codedFixedValue;
+        value           uniform 0;
+        name            alphaSquareInlet;
+        code            #{
+            const fvPatch& boundaryPatch = patch(); 
+            const vectorField& Cf = boundaryPatch.Cf(); 
+
+            scalarField& field = *this; 
+            field = patchInternalField(); 
+
+	    scalar jetrad=0.65e-3;
+            scalar xval;
+            scalar yval;
+            scalar rad;
+	    scalar delx=0.075e-3;
+            scalar dely=0.07407e-3;
+            scalar nfine=30;
+            scalar delxcell,delycell;
+	    scalar vof,xfine,yfine,radfine;	
+
+            delxcell=delx/nfine;
+            delycell=dely/nfine;	
+
+            forAll(Cf, faceI)
+            {
+		xval=Cf[faceI].x();
+                yval=Cf[faceI].y();
+                rad=sqrt(xval*xval+yval*yval);
+
+		if (jetrad-rad>=sqrt(pow(delx,2)+pow(dely,2)))
+                {
+                    field[faceI] = 1.0; 
+                }
+		if (fabs(jetrad-rad)<=sqrt(pow(delx,2)+pow(dely,2)))
+		{
+			vof=0.0;
+			for(int i=0; i<nfine-1; i=i+1)
+			{
+			    for(int j=0; j<nfine-1; j=j+1)
+			    {
+				   xfine=xval-delx/2.0+i*delxcell+delxcell/2.0;
+				   yfine=yval-dely/2.0+j*delycell+delycell/2.0;
+				   radfine=sqrt(pow(xfine,2)+pow(yfine,2));
+
+				   if(jetrad-radfine>=sqrt(pow(delxcell,2)+pow(delycell,2)))
+				   {
+				       vof=vof+delxcell*delycell;
+				   }
+			    }
+
+			 }
+		    
+   			field[faceI]=vof/(delx*dely);
+		}
+
+            }
+        #};
+    }
+    outlet
+    {
+        type            zeroGradient;
+    }
+    atmosphere
+    {
+        type            inletOutlet;
+        inletValue      uniform 0;
+        value           uniform 0;
+    }
+}
+
+
+// ************************************************************************* //

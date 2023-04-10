@@ -1,0 +1,82 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      k;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform 0.4398;
+
+boundaryField
+{
+    inlet_gas
+    {
+ 	type            fixedValue;
+        intensity       0.02;
+        value           uniform 1e-16;
+    }
+    inlet_liquid
+    {
+	type            codedFixedValue;
+        value           uniform 0;
+        name            k_inlet_liquid;
+        code            
+	#{
+            const fvPatch& boundaryPatch = patch();
+            const vectorField& Cf = boundaryPatch.Cf();
+
+            scalarField& field = *this;
+            field = patchInternalField();
+
+            scalar jetrad=0.65e-3;
+            scalar xval;
+            scalar yval;
+            scalar rad;
+
+            forAll(Cf, faceI)
+            {
+                xval=Cf[faceI].x();
+                yval=Cf[faceI].y();
+                rad=sqrt(xval*xval+yval*yval);
+
+                if (rad<=jetrad)
+                {
+                    field[faceI] = 0.4398;
+                }
+                if (rad>=jetrad)
+                {
+		    field[faceI]=1e-16;
+                }
+
+             }
+        #};	
+    }
+    outlet
+    {
+	type            inletOutlet;
+        inletValue      uniform 1e-16;
+        value           $internalField;	
+    }
+    atmosphere
+    {
+	type            inletOutlet;
+        inletValue      uniform 1e-16;
+        value           $internalField;
+    }
+
+}
+
+
+// ************************************************************************* //

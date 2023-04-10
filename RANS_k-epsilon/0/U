@@ -1,0 +1,81 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  5.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      binary;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (120.4 0 0);
+
+boundaryField
+{
+    inlet_gas
+    {
+        type            fixedValue;
+        value           uniform (120.4 0 0);
+    }
+    inlet_liquid
+    {
+        type            codedFixedValue;
+        value           uniform (0 0 0);
+        name            velocitySquareInlet;
+        code            #{
+            const fvPatch& boundaryPatch = patch(); 
+            const vectorField& Cf = boundaryPatch.Cf(); 
+
+            vectorField& field = *this; 
+            scalar jetrad=0.65e-3;
+	    scalar xval;
+	    scalar yval;
+	    scalar rad;
+	    scalar delx=0.075e-3;
+	    scalar dely=0.07407e-3;
+	    scalar nfine=10;
+	    scalar delxcell,delycell;
+	    scalar umax=10.83;
+	    scalar velocity;	
+
+	    delxcell=delx/nfine;
+	    delycell=dely/nfine;	
+	
+            forAll(Cf, faceI)
+            {	
+		xval=Cf[faceI].x();
+		yval=Cf[faceI].y();
+		rad=sqrt(xval*xval+yval*yval);
+
+		if (jetrad-rad >= 0.0)
+                {
+		    velocity=umax*pow((1 - sqrt(pow(xval,2)+pow(yval,2))/jetrad),1.0/7.0);	
+                    field[faceI] = vector(0.0, 0, velocity);
+                }
+            }
+        #};
+    }
+    outlet
+    {
+        type            inletOutlet;
+        inletValue      uniform (0 0 0);
+        value           uniform (0 0 0);
+    }
+    atmosphere
+    {
+        type            pressureInletOutletVelocity;
+        value           uniform (120.4 0 0);
+    }
+}
+
+
+// ************************************************************************* //

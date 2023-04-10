@@ -27,7 +27,7 @@ The comparison of the liquid penetration with correlations in literature
 
 # I/O and post processing
 Binary Visualization Toolkit (VTK) format is used to output the files. The ```PostProcess``` directory consists of post processing tools to extract data, write the 
-files required for visulization and rendering
+files required for visualization and rendering
 1. ```PostProcess``` contains routines to read the binary VTK output file and extract the data
 2. ```PythonScripts``` contains python scripts for the comparison
 3. ```Movies``` contains the Python scripts for visualization using ray casting in VisIt

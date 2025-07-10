@@ -9,7 +9,7 @@ are perfomed using interFOAM. The domain, boundary conditions and the simulation
 
 ## Setup 
 
-<img src="Images/JICF_Setup.png?raw=true&v=50" alt="your_alternative_text" width="50%" height="50%" loop="true" autoplay="true"><img src="Images/JICF_Table.png?raw=true&v=50" alt="your_alternative_text" width="50%" height="50%">   
+<img src="Images/JICF_Setup.png?raw=true&v=50" alt="your_alternative_text" width="50%" loop="true" autoplay="true"><img src="Images/JICF_Table.png?raw=true&v=50" alt="your_alternative_text" width="50%">   
 
 ## Running
 The ```DNS``` and ```RANS_k-epsilon``` directories contain the ```0```, ```constant``` and ```system``` directories required to run the simulations 
